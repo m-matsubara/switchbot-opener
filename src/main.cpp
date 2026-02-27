@@ -1,7 +1,8 @@
 ﻿/*
   Switch Bot SmartLock Opener
 
-  2026/02/28 m.matsubara (Coding by: Codex - gpt-5.2-codex)
+  2026/02/28 m.matsubara
+  Code authored with assistance from OpenAI Codex.
 */
 
 #include <Arduino.h>
@@ -268,5 +269,6 @@ void loop() {
   showStatus(false);
   delay(10);
 }
+
 
 

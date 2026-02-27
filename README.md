@@ -3,6 +3,8 @@
 M5StickC Plus のボタン操作で SwitchBot Smart Lock を開閉するプロジェクトです。  
 本プロジェクトは **SwitchBot SmartLock Pro** でのみ動作確認しています。
 
+Code authored with assistance from OpenAI Codex.
+
 ## 対応機種
 
 - **M5StickC Plus のみ対応**
@@ -59,4 +61,3 @@ pio device monitor
 - 本プロジェクトは **SwitchBot SmartLock Pro でのみ動作確認済み**です  
 - **M5StickC Plus のみ対応**しています（Plus2 などは未対応）
 - `src/const.hpp.example` から `src/const.hpp` を作成する必要があります
-
