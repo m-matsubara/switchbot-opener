@@ -1,0 +1,11 @@
+/*
+  Switch Bot SmartLock Opener
+*/
+
+// ======= User config =======
+static const char* WIFI_SSID = "YOUR_SSID";
+static const char* WIFI_PASS = "YOUR_WIFI_PASSWORD";
+
+static const char* SWITCHBOT_TOKEN = "YOUR_SWITCHBOT_TOKEN";
+static const char* SWITCHBOT_SECRET = "YOUR_SWITCHBOT_SECRET";
+static const char* SWITCHBOT_DEVICE_ID = "YOUR_DEVICE_ID";
