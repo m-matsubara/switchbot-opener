@@ -196,7 +196,7 @@ void setup() {
 
   M5.begin();
   M5.Lcd.setRotation(1);
-  M5.Axp.ScreenBreath(6);  // 0..100, smaller is dimmer
+  M5.Axp.ScreenBreath(40);  // 0..100, smaller is dimmer
   M5.Lcd.fillScreen(TFT_BLACK);
   M5.Lcd.setTextSize(2);
   M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
