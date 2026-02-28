@@ -1,0 +1,22 @@
+root = true
+
+[*.cpp]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+
+[*.hpp]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+
+[*.md]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+
+[*.ini]
+end_of_line = lf
