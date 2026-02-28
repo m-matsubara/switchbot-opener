@@ -30,6 +30,8 @@ static const uint32_t LONG_PRESS_MS = 2000;
 static const uint32_t COOLDOWN_MS = 5000;
 static const uint32_t AUTO_POWER_OFF_MS = 60000;
 static const float USB_POWER_THRESHOLD_V = 4.0f;
+static const uint32_t UI_REFRESH_MS_SYNCING = 1000;
+static const uint32_t UI_REFRESH_MS_NORMAL = 10000;
 
 // ======= Helpers =======
 static uint32_t last_action_ms = 0;
@@ -40,11 +42,18 @@ static uint32_t last_activity_ms = 0;
 static const char* current_label = "* Locked *";
 static uint16_t current_color = TFT_GREEN;
 static uint32_t last_ui_ms = 0;
+static bool has_valid_time = false;
 
 static const int TZ_OFFSET_HOURS = 9; // JST = UTC+9
 
 static String formatTime(time_t t) {
-  if (t < 1600000000) return String("--:--");
+  if (!has_valid_time) {
+    if (t >= 1600000000) {
+      has_valid_time = true;
+    } else {
+      return String("Syncing");
+    }
+  }
   t += TZ_OFFSET_HOURS * 3600;
   struct tm tm_info;
   gmtime_r(&t, &tm_info);
@@ -57,7 +66,8 @@ static uint32_t error_until_ms = 0;
 
 static void showStatus(bool force) {
   uint32_t now = millis();
-  if (!force && now - last_ui_ms < 60000) return; // refresh once per minute
+  uint32_t refresh_ms = has_valid_time ? UI_REFRESH_MS_NORMAL : UI_REFRESH_MS_SYNCING;
+  if (!force && now - last_ui_ms < refresh_ms) return;
   last_ui_ms = now;
 
   M5.Lcd.fillScreen(TFT_BLACK);
@@ -91,16 +101,18 @@ static void showStatus(bool force) {
   }
 }
 
-static void waitForTimeSync() {
+static bool waitForTimeSync() {
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
   time_t now = 0;
   for (int i = 0; i < 30; ++i) {
     time(&now);
     if (now > 1600000000) { // 2020-09-13
-      return;
+      has_valid_time = true;
+      return true;
     }
     delay(500);
   }
+  return false;
 }
 
 static String makeUuidV4() {
@@ -225,8 +237,11 @@ void setup() {
   current_color = TFT_GREEN;
   showStatus(true);
 
-  waitForTimeSync();
-  Serial.println("Time sync done.");
+  if (waitForTimeSync()) {
+    Serial.println("Time sync done.");
+  } else {
+    Serial.println("Time sync pending.");
+  }
   last_activity_ms = millis();
 }
 
