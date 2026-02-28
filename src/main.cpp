@@ -28,11 +28,14 @@ static const bool BUTTON_ACTIVE_LOW = true;
 // Behavior
 static const uint32_t LONG_PRESS_MS = 2000;
 static const uint32_t COOLDOWN_MS = 5000;
+static const uint32_t AUTO_POWER_OFF_MS = 60000;
+static const float USB_POWER_THRESHOLD_V = 4.0f;
 
 // ======= Helpers =======
 static uint32_t last_action_ms = 0;
 static uint32_t a_down_ms = 0;
 static uint32_t b_down_ms = 0;
+static uint32_t last_activity_ms = 0;
 
 static const char* current_label = "* Locked *";
 static uint16_t current_color = TFT_GREEN;
@@ -190,6 +193,10 @@ static bool isPressed(int pin) {
   return BUTTON_ACTIVE_LOW ? (v == LOW) : (v == HIGH);
 }
 
+static bool isUsbPowered() {
+  return M5.Axp.GetVBusVoltage() >= USB_POWER_THRESHOLD_V;
+}
+
 void setup() {
   Serial.begin(115200);
   delay(200);
@@ -220,6 +227,7 @@ void setup() {
 
   waitForTimeSync();
   Serial.println("Time sync done.");
+  last_activity_ms = millis();
 }
 
 void loop() {
@@ -227,6 +235,18 @@ void loop() {
 
   bool aPressed = isPressed(PIN_BTN_A);
   bool bPressed = isPressed(PIN_BTN_B);
+  static bool prevAPressed = false;
+  static bool prevBPressed = false;
+
+  if (aPressed != prevAPressed || bPressed != prevBPressed) {
+    last_activity_ms = now;
+  }
+  prevAPressed = aPressed;
+  prevBPressed = bPressed;
+
+  if (isUsbPowered()) {
+    last_activity_ms = now;
+  }
 
   if (aPressed && a_down_ms == 0) a_down_ms = now;
   if (!aPressed) a_down_ms = 0;
@@ -242,9 +262,11 @@ void loop() {
         current_color = TFT_RED;
         showStatus(true);
         last_action_ms = now;
+        last_activity_ms = now;
       } else {
         error_until_ms = now + 3000;
         showStatus(true);
+        last_activity_ms = now;
       }
     }
     a_down_ms = 0;
@@ -258,12 +280,20 @@ void loop() {
         current_color = TFT_GREEN;
         showStatus(true);
         last_action_ms = now;
+        last_activity_ms = now;
       } else {
         error_until_ms = now + 3000;
         showStatus(true);
+        last_activity_ms = now;
       }
     }
     b_down_ms = 0;
+  }
+
+  if (now - last_activity_ms >= AUTO_POWER_OFF_MS) {
+    Serial.println("Auto power off due to inactivity.");
+    delay(50);
+    M5.Axp.PowerOff();
   }
 
   showStatus(false);
