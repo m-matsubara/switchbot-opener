@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(src/const.hpp)",
+      "Edit(src/const.hpp)",
+      "Bash(cat*const.hpp*)",
+      "Bash(head*const.hpp*)",
+      "Bash(tail*const.hpp*)",
+      "Bash(less*const.hpp*)",
+      "Bash(more*const.hpp*)",
+      "Bash(grep*const.hpp*)",
+      "Bash(sed*const.hpp*)",
+      "Bash(awk*const.hpp*)",
+      "Bash(vim*const.hpp*)",
+      "Bash(nano*const.hpp*)",
+      "Bash(bat*const.hpp*)",
+      "Bash(type*const.hpp*)",
+      "Bash(Get-Content*const.hpp*)",
+      "Bash(Select-String*const.hpp*)",
+      "Grep(path:src/const.hpp)"
+    ]
+  }
+}
